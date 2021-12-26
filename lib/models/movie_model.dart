@@ -1,8 +1,8 @@
 class MoviesModel {
- late int page;
- late int total_results;
- late int total_pages;
- List<Movie> results = [];
+  int? page;
+  int? total_results;
+  int? total_pages;
+  List<Movie> results = [];
 
   MoviesModel.fromJson(Map<String, dynamic> parsedJson) {
     page = parsedJson['page'];
@@ -16,25 +16,24 @@ class MoviesModel {
     
    results = temp;
   }
-// get set 
 
 }
 
 class Movie {
- late int vote_count;
- late int id;
- late bool video;
+  int? vote_count;
+  int? id;
+  bool? video;
   var vote_average;
- late String title;
- late double popularity;
- late String poster_path;
- late String original_language;
- late String original_title;
+  String? title;
+  double? popularity;
+  String? poster_path;
+  String? original_language;
+  String? original_title;
   List<int> genre_ids = [];
- late String backdrop_path;
- late bool adult;
- late String overview;
- late String release_date;
+  String? backdrop_path;
+  bool? adult;
+  String? overview;
+  String? release_date;
 
   Movie(movies) {
     vote_count = movies['vote_count'];
@@ -54,7 +53,5 @@ class Movie {
     overview = movies['overview'];
     release_date = movies['release_date'];
   }
-  
-// get set 
 
 }

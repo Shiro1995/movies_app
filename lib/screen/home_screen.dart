@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:movies_app/blocs/movie_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies_app/blocs/bloc/movie_bloc.dart';
 import 'package:movies_app/models/movie_model.dart';
+import 'package:movies_app/screen/movie_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    bloc.fetchAllMovies();
+    context.read<MovieBloc>().add(FetchAllMovie());
   }
 
   @override
@@ -24,27 +26,27 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Movies App'),
-      ),
-      resizeToAvoidBottomInset: false,
-      body: StreamBuilder(
-        stream: bloc.allMovies,
-        builder: (context, AsyncSnapshot<MoviesModel> snapshot) {
-          if (snapshot.hasData) {
-            return buildList(snapshot);
-          } else if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
-          }
-          return Center(child: CircularProgressIndicator());
-        },
-      ),
-    );
+        appBar: AppBar(
+          title: Center(
+            child: Text('Movies App'),
+          ),
+        ),
+        resizeToAvoidBottomInset: false,
+        body: BlocBuilder<MovieBloc, MovieState>(
+          builder: (context, state) {
+            if (state.moviesModel != null) {
+              return buildList(state.moviesModel!);
+            } else if (state.moviesModel == null) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return Center(child: CircularProgressIndicator());
+          },
+        ));
   }
 
-  Widget buildList(AsyncSnapshot<MoviesModel> snapshot) {
+  Widget buildList(MoviesModel snapshot) {
     return GridView.builder(
-        itemCount: snapshot.data?.results.length,
+        itemCount: snapshot.results.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 3 / 4,
@@ -57,18 +59,46 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(8.0),
             child: GridTile(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  context.read<MovieBloc>().add(ResetVideoTrailer());
+                  openDetailPage(snapshot, index);
+                },
                 child: Image.network(
-                  'https://image.tmdb.org/t/p/w185${snapshot.data?.results[index].poster_path}',
+                  'https://image.tmdb.org/t/p/w185${snapshot.results[index].poster_path}',
                   fit: BoxFit.cover,
                 ),
               ),
               footer: GridTileBar(
                 backgroundColor: Colors.black87,
-                title: Text('${snapshot.data?.results[index].title}'),
+                title: Center(
+                  child: Text(('${snapshot.results[index].title}')),
+                ),
+              ),
+              header: Container(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  '${snapshot.results[index].release_date}'.substring(0, 4),
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           );
         });
+  }
+
+  openDetailPage(MoviesModel data, int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return MovieDetail(
+          title: data.results[index].title,
+          posterUrl: data.results[index].backdrop_path,
+          description: data.results[index].overview,
+          releaseDate: data.results[index].release_date,
+          voteAverage: data.results[index].vote_average.toString(),
+          movieId: data.results[index].id,
+        );
+      }),
+    );
   }
 }
