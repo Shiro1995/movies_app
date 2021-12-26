@@ -1,16 +1,47 @@
-# movies_app
+# About Movies App
 
-A new Flutter project.
+This is a simple repository, that helps fetch top-rated movies. Using MultiBlocProvider to manage state and equatable package to simplify coding style.
 
-## Getting Started
+## How To Use?
 
-This project is a starting point for a Flutter application.
+After cloning this project, fill your **API Key** into code like bellow at `/MovieApiProvider`. 
+The IMDB **API Key** could be obtained from this [link](https://www.themoviedb.org/account/signup)
 
-A few resources to get you started if this is your first Flutter project:
+```
+  final _apiKey = "YOUR_API_KEY";
+```
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## What's in this app.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [x] List of top rated movies.
+- [x] Show movie detail information.
+- [x] Play video youtube trailer. 
+- [x] Filter movies based on min year and max year.
+
+## Current dependencies added at *pubspec.yaml*:
+```
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  http: ^0.13.4
+  flutter_bloc: ^8.0.0
+  equatable: ^2.0.3
+  youtube_player_flutter: ^8.0.0
+
+```
+
+## ScreenShot
+![alt](https://i.ibb.co/pdKNhrz/1.jpg)
+![alt](https://i.ibb.co/VDb2rSk/2.jpg)
+![alt](https://i.ibb.co/dM4dnR4/3.jpg)
+      
+## Thank you!
+
+
+
+
+
+
+
