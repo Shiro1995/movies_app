@@ -9,4 +9,10 @@ class FetchDetailMovie extends MovieEvent {
   FetchDetailMovie({this.id});
 }
 
+class FilterMovies extends MovieEvent {
+  final int? minYear;
+  final int? maxYear;
+  FilterMovies({this.minYear, this.maxYear});
+}
+
 class ResetVideoTrailer extends MovieEvent {}

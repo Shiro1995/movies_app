@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:movies_app/blocs/bloc/movie_bloc.dart';
 import 'package:movies_app/models/movie_model.dart';
 import 'package:movies_app/screen/movie_detail_screen.dart';
@@ -12,6 +14,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _controlerMinYear = TextEditingController();
+  final TextEditingController _controlerMaxYear = TextEditingController();
+  String minYear = '';
+  String maxYear = '';
+
   @override
   void initState() {
     super.initState();
@@ -26,12 +35,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Center(
             child: Text('Movies App'),
           ),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(
+                  Icons.filter_alt_outlined,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  scaffoldKey.currentState?.openEndDrawer();
+                }),
+          ],
         ),
-        resizeToAvoidBottomInset: false,
+        endDrawer: buildDrawer(),
         body: BlocBuilder<MovieBloc, MovieState>(
           builder: (context, state) {
             if (state.moviesModel != null) {
@@ -44,9 +65,118 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
-  Widget buildList(MoviesModel snapshot) {
+  Widget buildDrawer() {
+    return Drawer(
+        elevation: 4.0,
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20, 50, 20, 0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _controlerMinYear,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Enter min year',
+                    labelStyle: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
+                  validator: (value) {
+                    if (value == '') {
+                      return 'Please enter min year';
+                    }
+                    if (int.parse(value!) > 2021) {
+                      return 'Please enter min year < 2021';
+                    }
+                  },
+                  onSaved: (value) {
+                    if (value != null) {
+                      minYear = value;
+                    }
+                  },
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: _controlerMaxYear,
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Enter Max Year',
+                    labelStyle: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  ],
+                  validator: (value) {
+                    if (value == '') {
+                      return 'Please enter max year';
+                    }
+                    if (int.parse(value!) < 1000) {
+                      return 'Please enter max year > 1000';
+                    }
+                    if (int.parse(value) > 2021) {
+                      return 'please enter max year less than current year';
+                    }
+                  },
+                  onSaved: (value) {
+                    if (value != null) {
+                      maxYear = value;
+                    }
+                  },
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 20),
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        child: Text('Filter'),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            context.read<MovieBloc>().add(FilterMovies(
+                                minYear: int.parse(minYear.substring(0, 4)),
+                                maxYear: int.parse(maxYear.substring(0, 4))));
+                            Navigator.pop(context);
+                          }
+                        },
+                      ),
+                      SizedBox(width: 20),
+                      ElevatedButton(
+                        child: Text('Clear'),
+                        onPressed: () {
+                          _formKey.currentState!.reset();
+                          _controlerMinYear.text = '';
+                          _controlerMaxYear.text = '';
+                          context
+                              .read<MovieBloc>()
+                              .add(FilterMovies(minYear: 0, maxYear: 2022));
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
+
+  Widget buildList(List<Movie> snapshot) {
     return GridView.builder(
-        itemCount: snapshot.results.length,
+        itemCount: snapshot.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 3 / 4,
@@ -61,23 +191,23 @@ class _HomeScreenState extends State<HomeScreen> {
               child: GestureDetector(
                 onTap: () {
                   context.read<MovieBloc>().add(ResetVideoTrailer());
-                  openDetailPage(snapshot, index);
+                  openDetailPage(snapshot[index], index);
                 },
                 child: Image.network(
-                  'https://image.tmdb.org/t/p/w185${snapshot.results[index].poster_path}',
+                  'https://image.tmdb.org/t/p/w185${snapshot[index].poster_path}',
                   fit: BoxFit.cover,
                 ),
               ),
               footer: GridTileBar(
                 backgroundColor: Colors.black87,
                 title: Center(
-                  child: Text(('${snapshot.results[index].title}')),
+                  child: Text(('${snapshot[index].title}')),
                 ),
               ),
               header: Container(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  '${snapshot.results[index].release_date}'.substring(0, 4),
+                  '${snapshot[index].release_date}'.substring(0, 4),
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -86,17 +216,17 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  openDetailPage(MoviesModel data, int index) {
+  openDetailPage(Movie data, int index) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) {
         return MovieDetail(
-          title: data.results[index].title,
-          posterUrl: data.results[index].backdrop_path,
-          description: data.results[index].overview,
-          releaseDate: data.results[index].release_date,
-          voteAverage: data.results[index].vote_average.toString(),
-          movieId: data.results[index].id,
+          title: data.title,
+          posterUrl: data.backdrop_path,
+          description: data.overview,
+          releaseDate: data.release_date,
+          voteAverage: data.vote_average.toString(),
+          movieId: data.id,
         );
       }),
     );

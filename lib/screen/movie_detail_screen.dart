@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movies_app/blocs/bloc/movie_bloc.dart';
-
-import 'package:movies_app/models/video_trailer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import 'package:movies_app/blocs/bloc/movie_bloc.dart';
+import 'package:movies_app/models/video_trailer.dart';
 
 class MovieDetail extends StatefulWidget {
   final posterUrl;
@@ -48,7 +48,6 @@ class MovieDetailState extends State<MovieDetail> {
   @override
   void initState() {
     super.initState();
-    print(widget.posterUrl!);
   }
 
   @override
