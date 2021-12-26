@@ -52,7 +52,6 @@ class MovieDetailState extends State<MovieDetail> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     context.read<MovieBloc>().add(FetchDetailMovie(id: widget.movieId));
   }

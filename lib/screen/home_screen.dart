@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Drawer(
         elevation: 4.0,
         child: Container(
-          padding: EdgeInsets.fromLTRB(20, 50, 20, 0),
+          padding: EdgeInsets.fromLTRB(20, 80, 20, 0),
           child: Form(
             key: _formKey,
             child: Column(
