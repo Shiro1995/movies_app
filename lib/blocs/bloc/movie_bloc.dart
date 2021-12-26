@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:movies_app/models/movie_model.dart';
 import 'package:movies_app/models/video_trailer.dart';
-import 'package:movies_app/servers/movie_repository.dart';
+import 'package:movies_app/services/movie_repository.dart';
 
 part 'movie_event.dart';
 part 'movie_state.dart';

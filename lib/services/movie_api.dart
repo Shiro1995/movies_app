@@ -7,7 +7,7 @@ import 'package:movies_app/models/video_trailer.dart';
 
 class MovieApiProvider {
   final _baseUrl = "http://api.themoviedb.org/3/movie";
-  final _apiKey = "";
+  final _apiKey = "f7b43fb7fcb594401ceeffb0ae60be57";
 
   Future<List<Movie>> fetchMovieList() async {
     final response =
@@ -28,5 +28,4 @@ class MovieApiProvider {
       throw Exception('Failed to load trailers');
     }
   }
-
 }
