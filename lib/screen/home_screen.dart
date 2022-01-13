@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies_app/blocs/movie_bloc/movie_bloc.dart';
 
-import 'package:movies_app/blocs/bloc/movie_bloc.dart';
+
 import 'package:movies_app/models/movie_model.dart';
 import 'package:movies_app/screen/movie_detail_screen.dart';
 

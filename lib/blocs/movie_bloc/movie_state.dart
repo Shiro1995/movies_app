@@ -1,12 +1,23 @@
 part of 'movie_bloc.dart';
 
+enum LoadingStatus { initial, success, failure }
+
 class MovieState extends Equatable {
+  const MovieState({
+    this.status = LoadingStatus.initial,
+    this.moviesModel,
+    this.videoTrailers,
+    this.moviesFilter,
+  });
+
+  final LoadingStatus? status;
   final List<Movie>? moviesModel;
   final List<Movie>? moviesFilter;
   final VideoTrailers? videoTrailers;
-  const MovieState({this.moviesModel, this.videoTrailers, this.moviesFilter});
   MovieState copyWith(
-          {List<Movie>? moviesModel, VideoTrailers? videoTrailers, List<Movie>? moviesFilter }) =>
+          {List<Movie>? moviesModel,
+          VideoTrailers? videoTrailers,
+          List<Movie>? moviesFilter}) =>
       MovieState(
           moviesModel: moviesModel ?? this.moviesModel,
           videoTrailers: videoTrailers ?? this.videoTrailers,

@@ -11,20 +11,14 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   final _repository = MoviesRepository();
 
   MovieBloc() : super(MovieState()) {
-    on<MovieEvent>((event, emit) async {
-      if (event is FetchAllMovie) {
-        await fetchAllMovies(event, emit);
-      } else if (event is FetchDetailMovie) {
-        await fetchDetailMovie(event, emit);
-      } else if (event is ResetVideoTrailer) {
-        resetVideoTrailer(event, emit);
-      } else if (event is FilterMovies) {
-        filterMovies(event, emit);
-      }
-    });
+    on<FetchAllMovie>(fetchAllMovies);
+    on<FetchDetailMovie>(fetchDetailMovie);
+    on<ResetVideoTrailer>(resetVideoTrailer);
+    on<FilterMovies>(filterMovies);
   }
   Future<void> fetchAllMovies(
       FetchAllMovie event, Emitter<MovieState> emit) async {
+    emit(const MovieState());
     List<Movie> moviesModel = await _repository.fetchAllMovies();
     return emit(
         state.copyWith(moviesModel: moviesModel, moviesFilter: moviesModel));

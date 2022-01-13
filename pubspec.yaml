@@ -14,7 +14,7 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   http: ^0.13.4
-  flutter_bloc: ^8.0.0
+  flutter_bloc: ^8.0.1
   equatable: ^2.0.3
   youtube_player_flutter: ^8.0.0
 
